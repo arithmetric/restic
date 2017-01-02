@@ -36,7 +36,7 @@ func ParseConfig(s string) (interface{}, error) {
 func createConfig(p []string) (interface{}, error) {
 	var prefix string
 	switch {
-	case len(p) < 1:
+	case len(p) < 1 || p[0] == "":
 		return nil, errors.New("b2: invalid format, bucket name not found")
 	case len(p) == 1 || p[1] == "":
 		prefix = defaultPrefix

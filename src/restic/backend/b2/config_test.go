@@ -47,3 +47,22 @@ func TestParseConfig(t *testing.T) {
 		}
 	}
 }
+
+var invalidConfigTests = []struct {
+	s   string
+	cfg interface{}
+}{
+	{"a2:foobar/", nil},
+	{"b2:", nil},
+	{"b2:/", nil},
+}
+
+func TestParseInvalidConfig(t *testing.T) {
+	for i, test := range invalidConfigTests {
+		cfg, err := ParseConfig(test.s)
+		if err == nil || cfg != test.cfg {
+			t.Errorf("test %d:%s should fail, but returned: %v", i, test.s, cfg)
+			continue
+		}
+	}
+}
