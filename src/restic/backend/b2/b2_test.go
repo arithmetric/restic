@@ -22,6 +22,11 @@ func init() {
 		return
 	}
 
+	if os.Getenv("RESTIC_TEST_B2") == "0" {
+		SkipMessage = "RESTIC_TEST_B2 env var is set to 0. Skipping B2 backend tests."
+		return
+	}
+
 	cfg := b2.Config{
 		AccountID: os.Getenv("B2_ACCOUNT_ID"),
 		Key:       os.Getenv("B2_ACCOUNT_KEY"),

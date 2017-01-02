@@ -12,6 +12,7 @@ os:
 
 env:
   matrix:
+    RESTIC_TEST_B2=0
     RESTIC_TEST_FUSE=0
 
 matrix:
@@ -23,6 +24,11 @@ matrix:
     - os: linux
       go: 1.7.4
   include:
+    - os: linux
+      go: 1.7.4
+      sudo: true
+      env:
+        RESTIC_TEST_B2=1
     - os: linux
       go: 1.7.4
       sudo: true
