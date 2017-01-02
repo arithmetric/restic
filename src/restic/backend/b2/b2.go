@@ -46,9 +46,6 @@ func Open(cfg Config) (restic.Backend, error) {
 
 // Resolve the backend path for based on file type and name.
 func (be *B2) b2path(t restic.FileType, name string) string {
-	if t == "key" && name == "config" {
-		t = restic.ConfigFile
-	}
 	if string(t) == restic.ConfigFile || name == "" {
 		return path.Join(be.prefix, string(t))
 	}
