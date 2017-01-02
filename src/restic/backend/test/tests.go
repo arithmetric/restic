@@ -192,7 +192,7 @@ func TestLoad(t testing.TB) {
 		t.Fatalf("Load() did not return an error for non-existing blob")
 	}
 
-	length := rand.Intn(1<<24) + 2000
+	length := rand.Intn(1<<23) + 2000
 
 	data := test.Random(23, length)
 	id := restic.Hash(data)
@@ -203,7 +203,7 @@ func TestLoad(t testing.TB) {
 		t.Fatalf("Save() error: %v", err)
 	}
 
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 20; i++ {
 		l := rand.Intn(length + 2000)
 		o := rand.Intn(length + 2000)
 
@@ -251,7 +251,7 @@ func TestLoad(t testing.TB) {
 	}
 
 	// test with negative offset
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 20; i++ {
 		l := rand.Intn(length + 2000)
 		o := rand.Intn(length + 2000)
 
@@ -317,7 +317,7 @@ func TestLoadNegativeOffset(t testing.TB) {
 	b := open(t)
 	defer close(t)
 
-	length := rand.Intn(1<<24) + 2000
+	length := rand.Intn(1<<23) + 2000
 
 	data := test.Random(23, length)
 	id := restic.Hash(data)
@@ -329,7 +329,7 @@ func TestLoadNegativeOffset(t testing.TB) {
 	}
 
 	// test normal reads
-	for i := 0; i < 50; i++ {
+	for i := 0; i < 20; i++ {
 		l := rand.Intn(length + 2000)
 		o := -rand.Intn(length + 2000)
 
@@ -374,7 +374,7 @@ func TestSave(t testing.TB) {
 	defer close(t)
 	var id restic.ID
 
-	for i := 0; i < 10; i++ {
+	for i := 0; i < 5; i++ {
 		length := rand.Intn(1<<23) + 200000
 		data := test.Random(23, length)
 		// use the first 32 byte as the ID
