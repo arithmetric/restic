@@ -10,8 +10,6 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/spf13/cobra"
-
 	"restic/backend/b2"
 	"restic/backend/local"
 	"restic/backend/rest"
@@ -27,19 +25,6 @@ import (
 )
 
 var version = "compiled manually"
-var compiledAt = "unknown time"
-
-func parseEnvironment(cmd *cobra.Command, args []string) {
-	repo := os.Getenv("RESTIC_REPOSITORY")
-	if repo != "" {
-		globalOptions.Repo = repo
-	}
-
-	pw := os.Getenv("RESTIC_PASSWORD")
-	if pw != "" {
-		globalOptions.password = pw
-	}
-}
 
 // GlobalOptions hold all global options for restic.
 type GlobalOptions struct {
@@ -59,8 +44,13 @@ var globalOptions = GlobalOptions{
 }
 
 func init() {
+	pw := os.Getenv("RESTIC_PASSWORD")
+	if pw != "" {
+		globalOptions.password = pw
+	}
+
 	f := cmdRoot.PersistentFlags()
-	f.StringVarP(&globalOptions.Repo, "repo", "r", "", "repository to backup to or restore from (default: $RESTIC_REPOSITORY)")
+	f.StringVarP(&globalOptions.Repo, "repo", "r", os.Getenv("RESTIC_REPOSITORY"), "repository to backup to or restore from (default: $RESTIC_REPOSITORY)")
 	f.StringVarP(&globalOptions.PasswordFile, "password-file", "p", "", "read the repository password from a file")
 	f.BoolVarP(&globalOptions.Quiet, "quiet", "q", false, "do not outputcomprehensive progress report")
 	f.BoolVar(&globalOptions.NoLock, "no-lock", false, "do not lock the repo, this allows some operations on read-only repos")
@@ -133,7 +123,7 @@ func Printf(format string, args ...interface{}) {
 	_, err := fmt.Fprintf(globalOptions.stdout, format, args...)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "unable to write to stdout: %v\n", err)
-		os.Exit(100)
+		Exit(100)
 	}
 }
 
@@ -176,18 +166,19 @@ func Warnf(format string, args ...interface{}) {
 	_, err := fmt.Fprintf(globalOptions.stderr, format, args...)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "unable to write to stderr: %v\n", err)
-		os.Exit(100)
+		Exit(100)
 	}
 }
 
-// Exitf uses Warnf to write the message and then calls os.Exit(exitcode).
+// Exitf uses Warnf to write the message and then terminates the process with
+// the given exit code.
 func Exitf(exitcode int, format string, args ...interface{}) {
 	if format[len(format)-1] != '\n' {
 		format += "\n"
 	}
 
 	Warnf(format, args...)
-	os.Exit(exitcode)
+	Exit(exitcode)
 }
 
 // readPassword reads the password from the given reader directly.
